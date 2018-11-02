@@ -4,21 +4,95 @@
 <head>
     <meta charset="UTF-8">
     <title>Hello World!</title>
+    <script src="res/layui/layui.js"></script>
 </head>
 
 <body>
-    <h1>Hello World!</h1>
-    <!-- All of the Node.js APIs are available in this renderer process. -->
-    We are using Node.js
-    <script>document.write(process.versions.node)</script>,
-    Chromium
-    <script>document.write(process.versions.chrome)</script>,
-    and Electron
-    <script>document.write(process.versions.electron)</script>.
+    <h1>PID参数整定</h1>
+
+    <div id="PidContainer" style="height: 800px;"></div>
 
     <script>
+
+        var echarts = require('echarts');
+        var myChart = echarts.init(document.getElementById('PidContainer'), null, { renderer: 'svg' });
+
+        layui.use(['jquery', 'layedit'], function () {
+            var $ = layui.jquery;
+
+            var data1 = [100, 200, 600, 900, 500, 300, 400, 1000, 700, 800];
+            var data2 = [10, 100, 500, 2000, 200, 400, 50, 2000, 20, 0];
+
+            option = {
+                title: {
+                    text: '动态数据 + 时间坐标轴'
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                grid: {
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    splitNumber: 5,
+                    data: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
+                },
+                yAxis: {
+                    type: 'value',
+                    boundaryGap: false,
+                    splitNumber: 20
+                    // splitLine: {
+                    //     show: false
+                    // }
+                },
+                series: [
+                    {
+                        name: '模拟数据',
+                        type: 'line',
+                        data: data1
+                    },
+                    {
+                        // query: {},
+                        name: '真实数据',
+                        type: 'line',
+                        data: data2
+                    }]
+            };
+
+            myChart.setOption(option);
+
+            myChart.setOption(
+                {
+                    series:
+                        [
+                            // { data: [100, 200, 600, 900, 500, 300, 400, 1000, 700, 1000] },
+                            { name: '真实数据', data: [10, 100, 500, 2000, 200, 400, 50, 2000, 20, 100] }
+                        ]
+                }
+            )
+
+            $(window).on("resize", function () {
+                // console.log("resize");
+                myChart.resize();
+            });
+        });
+
         // You can also require other files to run in this process
-        require('./renderer.js')
+        // require('./renderer.js')
+
+        // var layui = require("layui-src")
+
+        var serialPort = require("serialport");
+        serialPort.list(function (err, ports) {
+            ports.forEach(function (port) {
+                console.log(port.comName);
+                console.log(port.pnpId);
+                console.log(port.manufacturer);
+            });
+        });
+
     </script>
 </body>
 
